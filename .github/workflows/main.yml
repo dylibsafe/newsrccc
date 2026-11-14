@@ -21,8 +21,17 @@ jobs:
             sudo rm -rf /opt/theos
           fi
           sudo git clone --recursive https://github.com/theos/theos.git /opt/theos
+          
+          # SDK qovluğunu tənzimləyirik
           sudo rm -rf /opt/theos/sdks
-          sudo git clone --depth=1 https://github.com/theos/sdks.git /opt/theos/sdks
+          sudo mkdir -p /opt/theos/sdks
+          git clone --depth=1 https://github.com/theos/sdks.git /tmp/sdks
+          cp -R /tmp/sdks/* /opt/theos/sdks/
+          
+          # Linux üçün Theos Toolchain (Clang/Compiler) yükləyirik
+          sudo mkdir -p /opt/theos/toolchain/linux
+          sudo git clone --depth=1 https://github.com/theos/toolchain-llvm.git /opt/theos/toolchain/linux/iphone
+          
           sudo chmod -R 777 /opt/theos
 
       - name: Build Tweak
