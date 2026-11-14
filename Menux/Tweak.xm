@@ -1,36 +1,5 @@
+#import <UIKit/UIKit.h>
 #import <JRMemory/MemScan.h>
-
-%hook ClassName
-
-- (void)drawMenuWindow {
-    JRMemoryEngine *engine = [JRMemoryEngine sharedInstance];
-    AddrRange range = {0x000000000, 0x2000000000};
-
-    float searchValue1 = 10;
-    [engine JRScanMemory:range withValue:&searchValue1 type:JR_Search_Type_Float];
-    
-    float nearbyValue1 = 45;
-    [engine JRNearBySearch:0x100 withValue:&nearbyValue1 type:JR_Search_Type_Float];
-    
-    float modify1 = 500;
-    NSArray *results1 = [engine getAllResults];
-    for (NSValue *result in results1) {
-        if (result != nil) {
-            [engine JRWriteMemory:[result unsignedLongLongValue] withValue:&modify1 type:JR_Search_Type_Float];
-        }
-    }
-}
-
-//**********************************************//
-//**This Header File is used in combination****//
-//**with a dynamic Library and must be rewritten**//
-//**if you want to use it for another purpose****//
-//**********************************************//
-
-//******************************************//
-//**Credits: Razzile & HackJack**//
-//****************************************//
-
 #import <Foundation/Foundation.h>
 #import <mach/mach.h>
 #import <mach-o/dyld.h>
@@ -148,8 +117,6 @@ void setLockStatus(bool state) {
             NSLog(@"Failed to enable LockStatus");
         }
     } else {
-        // Optional: Revert to original value if needed
-        // bool success = vm_writeData(0x102CA170C, original_value);
         NSLog(@"LockStatus disabled");
     }
 }
@@ -168,13 +135,11 @@ void setSpeedPlayer(bool state) {
             NSLog(@"Failed to enable SpeedPlayer");
         }
     } else {
-        // Optional: Revert to original value if needed
-        // bool success = vm_writeData(0x102C10D84, original_value);
         NSLog(@"SpeedPlayer disabled");
     }
 }
 
-// Example usage with UI (for reference)
+// UI implementation
 @interface TweakViewController : UIViewController
 @property (nonatomic, strong) UISwitch *lockStatusSwitch;
 @property (nonatomic, strong) UISwitch *speedPlayerSwitch;
@@ -193,7 +158,7 @@ void setSpeedPlayer(bool state) {
     self.speedPlayerSwitch = [[UISwitch alloc] init];
     [self.speedPlayerSwitch addTarget:self action:@selector(speedPlayerChanged:) forControlEvents:UIControlEventValueChanged];
     
-    // Add switches to view (layout code omitted for brevity)
+    // Add switches to view
     [self.view addSubview:self.lockStatusSwitch];
     [self.view addSubview:self.speedPlayerSwitch];
 }
