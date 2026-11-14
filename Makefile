@@ -4,11 +4,8 @@ FINALPACKAGE = 1
 FOR_RELEASE = 1
 THEOS_PACKAGE_SCHEME = rootless
 
-# --- iOS 27.2 HEDEF SDK AYARI ---
-TARGET = iphone:clang:latest:27.2
-# Eğer GitHub'da tam 27.2 SDK'sı bulunamazsa hata vermemesi için 'latest' kullanıyoruz.
-# Alt satırdaki yorumu kaldırıp spesifik bir SDK yolu da verebilirsin:
-# TARGET = iphone:clang:27.2:27.2
+# --- iOS 18.0 ve ÜZERİ İÇİN HEDEF AYARI ---
+TARGET = iphone:clang:latest:18.0
 
 include $(THEOS)/makefiles/common.mk
 
@@ -19,6 +16,7 @@ M7MD_FRAMEWORKS = IOKit UIKit Foundation Security QuartzCore CoreGraphics CoreTe
 M7MD_CFLAGS += -I/opt/theos/include
 M7MD_LDFLAGS += -F. -framework JRMemory
 
+# Linker hatasını çözmek için varsayılan linker kullanılıyor
 M7MD_CCFLAGS = -w -std=gnu++14 -fno-rtti -fno-exceptions -DNDEBUG -Wno-module-import-in-extern-c
 M7MD_CFLAGS = -w -fobjc-arc -Wno-deprecated-declarations -Wno-unused-variable -Wno-unused-value
 
