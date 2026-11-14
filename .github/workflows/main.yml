@@ -3,8 +3,6 @@ name: Build Dylib Only
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
@@ -22,16 +20,15 @@ jobs:
           echo "THEOS=$THEOS" >> $GITHUB_ENV
           echo "$THEOS/bin" >> $GITHUB_PATH
 
-      - name: Build Dylib
+      - name: Build Dylib (HATA VARSA DUR)
         run: |
-          make clean || true
-          make || true
+          make clean
+          make
 
       - name: Find Dylib and Upload
         uses: actions/upload-artifact@v4
         with:
           name: Derlenen-Dylib
-          # Derlenen dylib dosyasını gizli klasörlerde dahil her yerde ara
           path: |
             **/*.dylib
             .theos/obj/*.dylib
