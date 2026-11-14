@@ -14709,7 +14709,7 @@ robotoTinyFont->LegacyFontSize = 10;//5
                             DrawBox3D(HUD, Vehicle, Bounds, b2, allColors::LightGoldenrodYellow);
                         }
                         auto vhebase = Vehicle->VehicleCommon;
-                        float CurHP = 100.0f; // TODO: Yeni SDK'daki doğru can değişkeni bulunca düzeltilecek
+                        float CurHP = 100.0f; // TODO: 4.7 SDK'daki doğru can değişkeni bulunca düzeltilecek
                         float CurFEL = std::max(0.f, std::min(vhebase->Fuel, vhebase->FuelMax));
                         float MAXHEL = vhebase->HPMax;
                         float MaxFEL = vhebase->FuelMax;
