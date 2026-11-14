@@ -9,20 +9,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: rabis/theos:latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup Theos
+      - name: Install Dependencies & Theos
         run: |
-          if [ ! -d "$THEOS" ]; then
-            git clone --recursive https://github.com/theos/theos.git /opt/theos
-          fi
+          sudo apt-get update
+          sudo apt-get install -y clang make dpkg ldid
+          sudo git clone --recursive https://github.com/theos/theos.git /opt/theos
+          sudo chmod -R 777 /opt/theos
 
       - name: Build Tweak
         run: |
+          export THEOS=/opt/theos
+          export PATH="$THEOS/bin:$PATH"
           make clean
           make package
 
