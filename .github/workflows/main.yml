@@ -1,9 +1,11 @@
-name: Build Dylib Only
+name: Build M7MD Tweak
 
 on:
   push:
-    branches: [ main, master ]
-  workflow_dispatch:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch: # Manuel olarak da çalıştırabilmek için
 
 jobs:
   build:
@@ -18,18 +20,24 @@ jobs:
           export THEOS=$HOME/theos
           git clone --recursive https://github.com/theos/theos.git $THEOS
           echo "THEOS=$THEOS" >> $GITHUB_ENV
-          echo "$THEOS/bin" >> $GITHUB_PATH
 
-      - name: Build Dylib (HATA VARSA DUR)
+      - name: Install ldid (İmzalama Aracı)
         run: |
+          # ldid aracını indirip Theos'un bin klasörüne koyuyoruz
+          curl -LO https://github.com/ProcursusTeam/ldid/releases/download/v2.1.5-procursus7/ldid_macosx_arm64
+          chmod +x ldid_macosx_arm64
+          mkdir -p $THEOS/bin
+          mv ldid_macosx_arm64 $THEOS/bin/ldid
+          
+      - name: Build Tweak
+        run: |
+          export PATH=$THEOS/bin:$PATH
           make clean
-          make
+          make package FINALPACKAGE=1
 
-      - name: Find Dylib and Upload
+      - name: Upload Deb Package
         uses: actions/upload-artifact@v4
         with:
-          name: Derlenen-Dylib
-          path: |
-            **/*.dylib
-            .theos/obj/*.dylib
+          name: M7MD-Deb
+          path: ./packages/*.deb
           if-no-files-found: warn
