@@ -1,24 +1,33 @@
-name: Build Dylib
+name: Build Tweak
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    container:
+      image: rabis/theos:latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
       - name: Setup Theos
         run: |
-          sudo git clone --recursive https://github.com/theos/theos.git /opt/theos
+          if [ ! -d "$THEOS" ]; then
+            git clone --recursive https://github.com/theos/theos.git /opt/theos
+          fi
 
       - name: Build Tweak
         run: |
           make clean
-          make
+          make package
 
       - name: Upload Dylib Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
-          name: Tweak-Dylib
-          path: .theos/obj/arm64/*.dylib
+          name: com.m7md.tweak
+          path: packages/*.deb
