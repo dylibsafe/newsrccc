@@ -1,4 +1,4 @@
-#import <JRMemory/JRMemory.h>
+#import <JRMemory/MemScan.h>
 
 %hook ClassName
 
