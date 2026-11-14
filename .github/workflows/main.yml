@@ -16,8 +16,9 @@ jobs:
       - name: Install Dependencies & Theos
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang make dpkg
+          sudo apt-get install -y clang make dpkg git
           sudo git clone --recursive https://github.com/theos/theos.git /opt/theos
+          sudo git clone https://github.com/theos/sdks.git /opt/theos/sdks
           sudo chmod -R 777 /opt/theos
 
       - name: Build Tweak
