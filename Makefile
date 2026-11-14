@@ -4,6 +4,9 @@ FINALPACKAGE = 1
 FOR_RELEASE = 1
 THEOS_PACKAGE_SCHEME = rootless
 
+# Sistemdəki standart strip alətini təyin edirik
+STRIP = strip
+
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = M7MD
