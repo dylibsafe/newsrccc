@@ -1,5 +1,7 @@
 #import "MemScan.h"
 #include <mach/mach.h>
+#include <mach/vm_map.h> // EKLENDİ: mach_vm fonksiyonları için gerekli
+#include <mach/mach_vm.h>
 #include <vector>
 #include <algorithm>
 
@@ -10,8 +12,9 @@ void *JRMemoryEngine::JRReadMemory(unsigned long long address, size_t len) {
     void *buffer = malloc(len);
     if (!buffer) return NULL;
     
-    mach_vm_size_t outsize = 0;
-    kern_return_t kret = mach_vm_read_overwrite(task, (mach_vm_address_t)address, (mach_vm_size_t)len, (mach_vm_address_t)buffer, &outsize);
+    // outsize türü vm_size_t (unsigned long) olarak değiştirildi
+    vm_size_t outsize = 0;
+    kern_return_t kret = vm_read_overwrite(task, (vm_address_t)address, (vm_size_t)len, (vm_address_t)buffer, &outsize);
     
     if (kret != KERN_SUCCESS) {
         free(buffer);
@@ -23,7 +26,7 @@ void *JRMemoryEngine::JRReadMemory(unsigned long long address, size_t len) {
 // Temel bellek yazma fonksiyonu
 void JRMemoryEngine::JRWriteMemory(unsigned long long address, void *target, size_t len) {
     if (address == 0 || target == NULL || len == 0) return;
-    mach_vm_write(task, (mach_vm_address_t)address, (vm_offset_t)target, (mach_msg_type_number_t)len);
+    vm_write(task, (vm_address_t)address, (vm_offset_t)target, (mach_msg_type_number_t)len);
 }
 
 // Bellek Tarama Fonksiyonu (Basitleştirilmiş AOB Scan)
@@ -34,10 +37,10 @@ void JRMemoryEngine::JRScanMemory(AddrRange range, void *target, size_t len) {
     size_t chunkSize = 1024 * 1024; // 1MB'lık parçalar halinde oku
     
     while (current < range.end) {
-        mach_vm_size_t outsize = 0;
+        vm_size_t outsize = 0;
         void *buffer = malloc(chunkSize);
         
-        kern_return_t kret = mach_vm_read_overwrite(task, current, chunkSize, (mach_vm_address_t)buffer, &outsize);
+        kern_return_t kret = vm_read_overwrite(task, (vm_address_t)current, (vm_size_t)chunkSize, (vm_address_t)buffer, &outsize);
         
         if (kret == KERN_SUCCESS && outsize > 0) {
             // Basit bir arama (memcmp)
@@ -58,7 +61,7 @@ void JRMemoryEngine::JRScanMemory(AddrRange range, void *target, size_t len) {
     }
 }
 
-// Yakınlık araması (Şimdilik boş bırakıyoruz, gerekirse doldurulur)
+// Yakınlık araması (Şimdilik boş bırakıyoruz)
 void JRMemoryEngine::JRNearBySearch(int range, void *target, size_t len) {
     // İhtiyaç halinde JRScanMemory benzeri bir mantıkla yazılabilir
 }
