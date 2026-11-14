@@ -13,7 +13,9 @@ TWEAK_NAME = M7MD
 
 # Frameworkler (JRMemory kaldırıldı, sistem frameworkleri kaldı)
 M7MD_FRAMEWORKS = IOKit UIKit Foundation Security QuartzCore CoreGraphics CoreText AVFoundation Accelerate GLKit SystemConfiguration GameController WebKit
-M7MD_CFLAGS += -I/opt/theos/include
+
+# Derleyici Arama Yolları: Ana dizin (SDK.hpp için) ve SDK klasörü (içindeki .hpp'ler için)
+M7MD_CFLAGS += -I. -ISDK -I/opt/theos/include
 
 # Linker hatasını çözmek için varsayılan linker kullanılıyor
 # C++ standartı gnu++17 olarak güncellendi (iOS 18 SDK uyumluluğu için)
