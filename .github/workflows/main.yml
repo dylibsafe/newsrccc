@@ -16,14 +16,16 @@ jobs:
       - name: Install Dependencies & Theos
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang make dpkg git
+          sudo apt-get install -y clang make dpkg git curl unzip
           if [ -d "/opt/theos" ]; then
             sudo rm -rf /opt/theos
           fi
           sudo git clone --recursive https://github.com/theos/theos.git /opt/theos
-          if [ ! -d "/opt/theos/sdks" ]; then
-            sudo git clone https://github.com/theos/sdks.git /opt/theos/sdks
-          fi
+          
+          # SDK qovluğunu təmizləyib rəsmi sdks reposunu tam klonlayırıq
+          sudo rm -rf /opt/theos/sdks
+          sudo git clone --depth=1 https://github.com/theos/sdks.git /opt/theos/sdks
+          
           sudo chmod -R 777 /opt/theos
 
       - name: Build Tweak
