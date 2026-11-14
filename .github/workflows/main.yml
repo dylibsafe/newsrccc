@@ -24,13 +24,10 @@ jobs:
           
           # SDK qovluğunu tənzimləyirik
           sudo rm -rf /opt/theos/sdks
-          sudo mkdir -p /opt/theos/sdks
-          git clone --depth=1 https://github.com/theos/sdks.git /tmp/sdks
-          cp -R /tmp/sdks/* /opt/theos/sdks/
+          sudo git clone --depth=1 https://github.com/theos/sdks.git /opt/theos/sdks
           
-          # Linux üçün Theos Toolchain (Clang/Compiler) yükləyirik
-          sudo mkdir -p /opt/theos/toolchain/linux
-          sudo git clone --depth=1 https://github.com/theos/toolchain-llvm.git /opt/theos/toolchain/linux/iphone
+          # Theos-un rəsmi skripti ilə toolchain və mühiti avtomatik quraşdırırıq
+          sudo THEOS=/opt/theos /opt/theos/bin/install-theos || true
           
           sudo chmod -R 777 /opt/theos
 
