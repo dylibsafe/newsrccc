@@ -22,9 +22,11 @@ jobs:
           fi
           sudo git clone --recursive https://github.com/theos/theos.git /opt/theos
           
-          # SDK qovluğunu təmizləyib rəsmi sdks reposunu tam klonlayırıq
+          # SDK-nı birbaşa temp kimi çəkib düzgün yerə qoyuruq ki, struktur pozulmasın
           sudo rm -rf /opt/theos/sdks
-          sudo git clone --depth=1 https://github.com/theos/sdks.git /opt/theos/sdks
+          sudo mkdir -p /opt/theos/sdks
+          git clone --depth=1 https://github.com/theos/sdks.git /tmp/sdks
+          cp -R /tmp/sdks/* /opt/theos/sdks/
           
           sudo chmod -R 777 /opt/theos
 
