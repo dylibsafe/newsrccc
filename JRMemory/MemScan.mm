@@ -1,9 +1,9 @@
 #import "MemScan.h"
 #include <mach/mach.h>
-#include <mach/vm_map.h> // EKLENDİ: mach_vm fonksiyonları için gerekli
-#include <mach/mach_vm.h>
+#include <mach/vm_map.h>
 #include <vector>
 #include <algorithm>
+#include <string.h>
 
 // Temel bellek okuma fonksiyonu
 void *JRMemoryEngine::JRReadMemory(unsigned long long address, size_t len) {
@@ -12,7 +12,6 @@ void *JRMemoryEngine::JRReadMemory(unsigned long long address, size_t len) {
     void *buffer = malloc(len);
     if (!buffer) return NULL;
     
-    // outsize türü vm_size_t (unsigned long) olarak değiştirildi
     vm_size_t outsize = 0;
     kern_return_t kret = vm_read_overwrite(task, (vm_address_t)address, (vm_size_t)len, (vm_address_t)buffer, &outsize);
     
@@ -39,20 +38,23 @@ void JRMemoryEngine::JRScanMemory(AddrRange range, void *target, size_t len) {
     while (current < range.end) {
         vm_size_t outsize = 0;
         void *buffer = malloc(chunkSize);
+        if (!buffer) break;
         
         kern_return_t kret = vm_read_overwrite(task, (vm_address_t)current, (vm_size_t)chunkSize, (vm_address_t)buffer, &outsize);
         
         if (kret == KERN_SUCCESS && outsize > 0) {
-            // Basit bir arama (memcmp)
-            for (size_t i = 0; i < outsize - len; i++) {
-                if (memcmp((char*)buffer + i, target, len) == 0) {
-                    // Bulundu! result yapısına ekle
-                    result_region *region = new result_region();
-                    region->region_base = current + i;
-                    region->slide.push_back(0); // Basit tutuyoruz
-                    
-                    this->result->resultBuffer.push_back(region);
-                    this->result->count++;
+            if (outsize >= len) {
+                // Basit bir arama (memcmp)
+                for (size_t i = 0; i <= outsize - len; i++) {
+                    if (memcmp((char*)buffer + i, target, len) == 0) {
+                        // Bulundu! result yapısına ekle
+                        result_region *region = new result_region();
+                        region->region_base = current + i;
+                        region->slide.push_back(0); // Basit tutuyoruz
+                        
+                        this->result->resultBuffer.push_back(region);
+                        this->result->count++;
+                    }
                 }
             }
         }
@@ -61,7 +63,7 @@ void JRMemoryEngine::JRScanMemory(AddrRange range, void *target, size_t len) {
     }
 }
 
-// Yakınlık araması (Şimdilik boş bırakıyoruz)
+// Yakınlık araması (Şimdilik boş bırakıyoruz, gerekirse doldurulur)
 void JRMemoryEngine::JRNearBySearch(int range, void *target, size_t len) {
     // İhtiyaç halinde JRScanMemory benzeri bir mantıkla yazılabilir
 }
