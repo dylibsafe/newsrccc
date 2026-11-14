@@ -26,8 +26,10 @@ jobs:
           sudo rm -rf /opt/theos/sdks
           sudo git clone --depth=1 https://github.com/theos/sdks.git /opt/theos/sdks
           
-          # Theos-un rəsmi quraşdırma skripti ilə toolchain-i avtomatik quraşdırırıq
-          sudo THEOS=/opt/theos /opt/theos/bin/install-theos || true
+          # Linux toolchain qovluğunu yaradıb sistem clang/clang++ fayllarını linkləyirik
+          sudo mkdir -p /opt/theos/toolchain/linux/iphone/bin
+          sudo ln -s /usr/bin/clang /opt/theos/toolchain/linux/iphone/bin/clang
+          sudo ln -s /usr/bin/clang++ /opt/theos/toolchain/linux/iphone/bin/clang++
           
           sudo chmod -R 777 /opt/theos
 
