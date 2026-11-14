@@ -1,11 +1,11 @@
-name: Build M7MD Tweak
+name: Build M7MD Dylib
 
 on:
   push:
     branches: [ "main", "master" ]
   pull_request:
     branches: [ "main", "master" ]
-  workflow_dispatch: # Manuel olarak da çalıştırabilmek için
+  workflow_dispatch: # Manuel çalıştırma butonu
 
 jobs:
   build:
@@ -23,21 +23,21 @@ jobs:
 
       - name: Install ldid (İmzalama Aracı)
         run: |
-          # ldid aracını indirip Theos'un bin klasörüne koyuyoruz
           curl -LO https://github.com/ProcursusTeam/ldid/releases/download/v2.1.5-procursus7/ldid_macosx_arm64
           chmod +x ldid_macosx_arm64
           mkdir -p $THEOS/bin
           mv ldid_macosx_arm64 $THEOS/bin/ldid
-          
-      - name: Build Tweak
-        run: |
-          export PATH=$THEOS/bin:$PATH
-          make clean
-          make package FINALPACKAGE=1
+          echo "$THEOS/bin" >> $GITHUB_PATH
 
-      - name: Upload Deb Package
+      - name: Build Dylib Only
+        run: |
+          make clean
+          make all
+
+      - name: Find Dylib and Upload
         uses: actions/upload-artifact@v4
         with:
-          name: M7MD-Deb
-          path: ./packages/*.deb
-          if-no-files-found: warn
+          name: M7MD-Dylib
+          # Theos derleme sonrası dylib dosyasını .theos/obj/ klasörüne çıkarır
+          path: .theos/obj/M7MD.dylib
+          if-no-files-found: error
